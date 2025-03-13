@@ -16,6 +16,7 @@ import {
   addNewUserFormControl,
   addNewUserFormInitialState,
 } from "@/utils/index";
+import { addNewUserAction } from "@/actions";
 
 function AddNewUser() {
   const [OpePopUp, setOpenPopUp] = useState(false);
@@ -23,12 +24,20 @@ function AddNewUser() {
     addNewUserFormInitialState
   );
 
-  console.log(addNewUserFormData);
+  // console.log(addNewUserFormData);
 
   function handleSaveButtonValid() {
     return Object.keys(addNewUserFormData).every(
       (key) => addNewUserFormData[key].trim() !== ""
     );
+  }
+
+  async function handleAddNewUserAction() {
+    const result = await addNewUserAction(
+      addNewUserFormData,
+      "/user-management"
+    );
+    // console.log(result);
   }
 
   return (
@@ -46,7 +55,7 @@ function AddNewUser() {
             <DialogTitle>Add New User</DialogTitle>
             <DialogDescription>add new user to this website</DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
+          <form action={handleAddNewUserAction} className="grid gap-4 py-4">
             {addNewUserFormControl.map((c) => (
               <div className="p-1" key={c.name}>
                 <Label htmlFor={c.name} className="text-right m-2">
@@ -68,16 +77,16 @@ function AddNewUser() {
                 />
               </div>
             ))}
-          </div>
-          <DialogFooter>
-            <Button
-              className="disabled:opacity-55"
-              disabled={!handleSaveButtonValid()}
-              type="submit"
-            >
-              Save
-            </Button>
-          </DialogFooter>
+            <DialogFooter>
+              <Button
+                className="disabled:opacity-55"
+                disabled={!handleSaveButtonValid()}
+                type="submit"
+              >
+                Save
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </div>
