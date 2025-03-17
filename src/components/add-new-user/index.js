@@ -17,14 +17,20 @@ import {
   addNewUserFormInitialState,
 } from "@/utils/index";
 import { addNewUserAction } from "@/actions";
+import { UserContext } from "@/context";
+import { useContext } from "react";
+import { updateUserAction } from "@/actions";
 
 function AddNewUser() {
-  const [OpePopUp, setOpenPopUp] = useState(false);
-  const [addNewUserFormData, setNewUserFormData] = useState(
-    addNewUserFormInitialState
-  );
-
   // console.log(addNewUserFormData);
+  const {
+    currentEditedId,
+    OpePopUp,
+    setOpenPopUp,
+    addNewUserFormData,
+    setNewUserFormData,
+    setCurrentEditedId,
+  } = useContext(UserContext);
 
   function handleSaveButtonValid() {
     return Object.keys(addNewUserFormData).every(
@@ -33,26 +39,36 @@ function AddNewUser() {
   }
 
   async function handleAddNewUserAction() {
-    const result = await addNewUserAction(
-      addNewUserFormData,
-      "/user-management"
-    );
-    // console.log(result);
+    const result =
+      currentEditedId !== null
+        ? await updateUserAction(
+            currentEditedId,
+            addNewUserFormData,
+            "/user-management"
+          )
+        : await addNewUserAction(addNewUserFormData, "/user-management");
+    console.log(result);
+    if (result.success) {
+      setOpenPopUp(false);
+    }
   }
 
   return (
     <div className="">
-      <Button onClick={() => setOpenPopUp(true)}>Add New User</Button>
+      <Button onClick={() => setOpenPopUp(true)}>add new user</Button>
       <Dialog
         open={OpePopUp}
         onOpenChange={() => {
           setOpenPopUp(false);
           setNewUserFormData(addNewUserFormInitialState);
+          setCurrentEditedId(null);
         }}
       >
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Add New User</DialogTitle>
+            <DialogTitle>
+              {currentEditedId == null ? "Add New User" : "Edit User"}
+            </DialogTitle>
             <DialogDescription>add new user to this website</DialogDescription>
           </DialogHeader>
           <form action={handleAddNewUserAction} className="grid gap-4 py-4">
