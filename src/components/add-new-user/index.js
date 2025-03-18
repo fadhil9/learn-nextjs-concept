@@ -48,9 +48,9 @@ function AddNewUser() {
           )
         : await addNewUserAction(addNewUserFormData, "/user-management");
     console.log(result);
-    if (result.success) {
-      setOpenPopUp(false);
-    }
+    setNewUserFormData(addNewUserFormInitialState);
+    setCurrentEditedId(null);
+    setOpenPopUp(false);
   }
 
   return (
